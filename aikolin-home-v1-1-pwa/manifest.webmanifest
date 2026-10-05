@@ -1,0 +1,19 @@
+{
+  "name": "AIKOLIN HOME V1.1",
+  "short_name": "AIKOLIN",
+  "description": "AIKOLIN HOME — Personal Life & Business Management PWA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071722",
+  "theme_color": "#071722",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
