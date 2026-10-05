@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#071722" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>AIKOLIN HOME V1.1 — Training PWA</title>
+<style>
+  :root{
+    --bg:#071722;--panel:#0d2230;--panel2:#122d3e;--text:#f7fbff;--muted:#9db1bf;
+    --line:rgba(255,255,255,.10);--green:#39c77a;--yellow:#ffca3a;--red:#ff6b6b;
+    --blue:#5aa7ff;--purple:#a979ff;--orange:#ff9a3d;--shadow:0 12px 30px rgba(0,0,0,.30);
+    --radius:20px;--safe:env(safe-area-inset-bottom,0px)
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#06131d,#0a1c29 50%,#06131d);color:var(--text);font-family:"Noto Sans Myanmar","Pyidaungsu",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+  button,input,textarea{font:inherit}
+  button{cursor:pointer}
+  .app{max-width:460px;margin:0 auto;min-height:100vh;background:rgba(5,18,28,.82);position:relative;box-shadow:0 0 70px rgba(0,0,0,.45)}
+  .topbar{position:sticky;top:0;z-index:20;padding:16px 18px 12px;background:rgba(5,18,28,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:11px}
+  .bolt{font-size:28px}.brand h1{font-size:19px;letter-spacing:.3px;margin:0}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  .mode{margin-top:10px;background:rgba(255,202,58,.12);border:1px solid rgba(255,202,58,.28);color:#ffe59a;border-radius:12px;padding:8px 10px;font-size:11px;display:flex;justify-content:space-between;gap:8px}
+  .content{padding:16px 16px 96px}
+  .screen{display:none;animation:fade .18s ease}.screen.active{display:block}@keyframes fade{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .hero{background:linear-gradient(135deg,rgba(57,199,122,.18),rgba(90,167,255,.10));border:1px solid rgba(57,199,122,.30);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
+  .hero .status{display:flex;align-items:center;gap:9px;font-size:20px;font-weight:800}.dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 18px rgba(57,199,122,.7)}
+  .hero p{color:var(--muted);font-size:12px;margin:8px 0 0}
+  .dateRow{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin:0 2px 12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .card{border:1px solid var(--line);border-radius:18px;padding:14px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));box-shadow:0 8px 18px rgba(0,0,0,.14)}
+  .card.clickable{cursor:pointer;transition:.15s}.card.clickable:active{transform:scale(.985)}
+  .cardTop{display:flex;align-items:center;justify-content:space-between;gap:8px}.icon{font-size:22px}.label{font-size:13px;font-weight:800}.count{font-size:11px;color:var(--muted);margin-top:5px}
+  .health{background:linear-gradient(180deg,rgba(255,107,107,.12),rgba(255,107,107,.035))}.money{background:linear-gradient(180deg,rgba(57,199,122,.12),rgba(57,199,122,.035))}.stock{background:linear-gradient(180deg,rgba(90,167,255,.14),rgba(90,167,255,.035))}.team{background:linear-gradient(180deg,rgba(169,121,255,.14),rgba(169,121,255,.035))}.approval{background:linear-gradient(180deg,rgba(255,154,61,.15),rgba(255,154,61,.035))}.today{background:linear-gradient(180deg,rgba(157,177,191,.12),rgba(157,177,191,.035))}
+  .quote{margin-top:16px;padding:16px;border-radius:16px;background:rgba(90,167,255,.10);color:#d7ebff;text-align:center;font-size:12px;line-height:1.7;border:1px solid rgba(90,167,255,.18)}
+  .sectionTitle{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px}.sectionTitle h2{margin:0;font-size:18px}.back{border:0;background:transparent;color:var(--text);font-size:22px;padding:4px 8px 4px 0}.add{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);border-radius:10px;padding:7px 10px}
+  .subtabs{display:flex;gap:6px;overflow:auto;padding-bottom:4px;margin-bottom:12px}.pill{border:1px solid var(--line);background:rgba(255,255,255,.035);color:var(--muted);padding:7px 10px;border-radius:999px;font-size:11px;white-space:nowrap}.pill.active{background:rgba(90,167,255,.18);border-color:rgba(90,167,255,.35);color:#dcecff}
+  .bigCard{border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;background:rgba(255,255,255,.035)}
+  .bigCard h3{font-size:14px;margin:0 0 8px}.big{font-size:26px;font-weight:900;letter-spacing:.2px}.muted{color:var(--muted)}.tiny{font-size:11px}.success{color:#74e6a5}.warn{color:#ffd977}.danger{color:#ff8c8c}
+  .progress{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin:9px 0}.progress > span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#75e8ad)}
+  .list{display:flex;flex-direction:column;gap:9px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+  .rowMain{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:900;background:rgba(90,167,255,.20);flex:0 0 auto}.row b{font-size:12px;display:block}.row small{font-size:10px;color:var(--muted)}
+  .tag{padding:5px 7px;border-radius:999px;font-size:9px;border:1px solid var(--line);white-space:nowrap}.tag.green{background:rgba(57,199,122,.13);color:#87efb3}.tag.orange{background:rgba(255,154,61,.13);color:#ffca94}.tag.red{background:rgba(255,107,107,.14);color:#ffaaaA}.tag.blue{background:rgba(90,167,255,.14);color:#a8d0ff}
+  .moneyGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.mini{border-radius:13px;padding:12px;background:rgba(255,255,255,.035);border:1px solid var(--line)}.mini b{display:block;font-size:15px;margin-top:4px}
+  .task{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.task:last-child{border-bottom:0}.check{width:22px;height:22px;border-radius:7px;border:1px solid rgba(255,255,255,.25);background:transparent;color:white;display:grid;place-items:center;flex:0 0 auto}.check.done{background:var(--green);border-color:var(--green)}
+  .approveItem{padding:14px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--line);margin-bottom:10px}.approveActions{display:flex;gap:8px;margin-top:10px}.btn{border:0;border-radius:10px;padding:8px 10px;font-size:10px}.btn.primary{background:var(--blue);color:#06131d;font-weight:900}.btn.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line)}.btn.warn{background:rgba(255,154,61,.18);color:#ffcf9f;border:1px solid rgba(255,154,61,.28)}
+  .bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(460px,100%);z-index:30;background:rgba(4,15,23,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:7px 8px calc(7px + var(--safe));display:grid;grid-template-columns:repeat(6,1fr)}
+  .nav{border:0;background:transparent;color:#7890a1;padding:5px 2px;border-radius:12px;font-size:9px;display:grid;gap:2px;place-items:center}.nav span{font-size:19px}.nav.active{color:#fff;background:rgba(90,167,255,.12)}
+  .fab{position:fixed;right:max(18px,calc((100vw - 460px)/2 + 18px));bottom:84px;width:52px;height:52px;border-radius:50%;border:0;background:linear-gradient(135deg,#ffd84f,#ff9a3d);color:#071722;font-size:25px;font-weight:900;box-shadow:0 12px 25px rgba(0,0,0,.35);z-index:25}
+  .modalWrap{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:flex-end;justify-content:center;z-index:50}.modalWrap.show{display:flex}.modal{width:min(460px,100%);background:#0c2230;border-radius:24px 24px 0 0;padding:18px 18px calc(18px + var(--safe));border:1px solid var(--line);box-shadow:0 -16px 40px rgba(0,0,0,.4)}
+  .modal h3{margin:0 0 12px}.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}.field label{font-size:11px;color:var(--muted)}.field input,.field textarea,.field select{width:100%;border-radius:12px;border:1px solid var(--line);background:#081822;color:var(--text);padding:10px}.modalActions{display:flex;gap:8px;margin-top:12px}.modalActions .btn{flex:1;padding:11px}
+  .toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(20px);background:#102b3c;border:1px solid var(--line);padding:10px 14px;border-radius:12px;color:white;font-size:11px;opacity:0;pointer-events:none;transition:.2s;z-index:60;width:max-content;max-width:88vw}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .legend{margin-top:14px;font-size:10px;color:var(--muted);line-height:1.6}
+  @media(min-width:720px){body{padding:28px 0}.app{min-height:calc(100vh - 56px);border-radius:28px;overflow:hidden}.bottom{bottom:28px;border-radius:0 0 28px 28px}.fab{bottom:112px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="bolt">⚡</div><div><h1>AIKOLIN HOME <span style="color:var(--yellow)">V1.1</span></h1><small>My Life · My Family · My Business</small></div></div>
+    <div class="mode"><span>🧪 Training PWA · Money Live Read-Only</span><span style="display:flex;align-items:center;gap:8px"><button id="installBtn" style="display:none;border:1px solid rgba(255,202,58,.35);background:rgba(255,202,58,.14);color:#ffe59a;border-radius:9px;padding:5px 8px;font-size:10px">Install</button><span id="clock">--:--</span></span></div>
+  </div>
+
+  <main class="content">
+    <section class="screen active" id="home">
+      <div class="dateRow"><span id="todayDate">Today</span><span>📍 Yangon</span></div>
+      <div class="hero"><div class="status"><span class="dot"></span>Today: Stable</div><p>ယနေ့အတွက် လုပ်ဆောင်ရန်၊ စောင့်ကြည့်ရန်နှင့် အတည်ပြုရန်အချက်များကို တစ်နေရာတည်းတွင် စုထားသည်။</p></div>
+      <div class="grid">
+        <div class="card clickable health" data-screen="health"><div class="cardTop"><span class="icon">🩺</span><span>›</span></div><div class="label">Health</div><div class="count">1 action · 1 follow-up</div></div>
+        <div class="card clickable money" data-screen="money"><div class="cardTop"><span class="icon">💰</span><span>›</span></div><div class="label">Money</div><div class="count">2 alerts · 1 commitment</div></div>
+        <div class="card clickable stock" data-screen="stock"><div class="cardTop"><span class="icon">📦</span><span>›</span></div><div class="label">Stock</div><div class="count">2 attention items</div></div>
+        <div class="card clickable team" data-screen="team"><div class="cardTop"><span class="icon">👥</span><span>›</span></div><div class="label">Team</div><div class="count">1 follow-up</div></div>
+        <div class="card clickable approval" data-screen="approval"><div class="cardTop"><span class="icon">🚨</span><span>›</span></div><div class="label">Approval Needed</div><div class="count"><span id="approvalCount">3</span> pending</div></div>
+        <div class="card clickable today" data-screen="today"><div class="cardTop"><span class="icon">📋</span><span>›</span></div><div class="label">Today</div><div class="count"><span id="taskCount">3</span> priority tasks</div></div>
+      </div>
+      <div class="quote">“ပိုရှုပ်အောင် မလုပ်ဘဲ၊ ပိုရှင်းအောင် စနစ်ကျစေခြင်း”<br><span class="muted">Read → Analyze → Recommend → Human Approval</span></div>
+    </section>
+
+    <section class="screen" id="health">
+      <div class="sectionTitle"><div style="display:flex;align-items:center;gap:8px"><button class="back" data-screen="home">‹</button><h2>🩺 Health</h2></div><button class="add" data-add="health">＋</button></div>
+      <div class="bigCard" style="border-color:rgba(255,107,107,.25);background:rgba(255,107,107,.07)"><div class="tiny muted">PRIVATE HEALTH</div><h3 style="margin-top:5px">3‑Month Treatment Plan</h3><div class="big" style="font-size:20px">Oct → Dec 2026</div><div class="progress"><span style="width:14%"></span></div><div class="tiny muted">Consultation → Tests → Treatment → Follow‑up</div></div>
+      <div class="bigCard"><h3>Next appointment</h3><div class="row"><div class="rowMain"><div class="avatar">📅</div><div><b>ဆရာဝန်နှင့်တွေ့ဆုံ / စစ်ဆေးမှု</b><small>ရက်/အချိန်ကို confirm ပြုလုပ်ရန်</small></div></div><span class="tag orange">Action</span></div></div>
+      <div class="bigCard"><h3>Today’s Health Checklist</h3><div class="task"><button class="check done">✓</button><div><b>ဆရာဝန်ညွှန်ကြားသည့် ဆေး</b><div class="tiny muted">ဆေးညွှန်ကြားချက်အတိုင်း</div></div></div><div class="task"><button class="check">✓</button><div><b>Appointment / Test record</b><div class="tiny muted">ရလာဒ်များကို private အဖြစ် မှတ်တမ်းတင်</div></div></div><div class="task"><button class="check">✓</button><div><b>Questions for doctor</b><div class="tiny muted">မေးလိုသည့် အချက် ၃ ခုထက် မပိုစေ</div></div></div></div>
+      <div class="legend">ကျန်းမာရေးဆိုင်ရာဆုံးဖြတ်ချက်များအတွက် ဆရာဝန်ညွှန်ကြားချက်ကို အဓိကထားရန်။ App သည် မှတ်တမ်း/သတိပေး/စုစည်းရေးအတွက်သာ ဖြစ်သည်။</div>
+    </section>
+
+    <section class="screen" id="money">
+      <div class="sectionTitle"><div style="display:flex;align-items:center;gap:8px"><button class="back" data-screen="home">‹</button><h2>💰 Money</h2></div><button class="add" data-add="money">＋</button></div>
+      <div class="subtabs"><span class="pill active">DT3 Cycle</span><span class="pill">Ownership</span><span class="pill">Channels</span><span class="pill">History</span></div>
+      <div class="bigCard" id="moneyCycleCard">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <div><div class="tiny muted">SUPABASE · READ-ONLY</div><h3 id="cycleTitle" style="margin-top:5px">DT3 Seafood · Cycle #01</h3></div>
+          <span class="tag blue" id="cycleStatus">Loading…</span>
+        </div>
+        <div class="big" id="openingPerformance">—</div>
+        <div class="tiny muted">Opening Performance Balance</div>
+      </div>
+      <div class="moneyGrid">
+        <div class="mini">📅 Period<b id="cyclePeriod" style="font-size:12px">Loading…</b></div>
+        <div class="mini">🌱 Journey Fund<b id="journeyRate">—</b></div>
+        <div class="mini">📈 Verified Net Profit<b id="verifiedNetProfit" style="font-size:12px">Pending</b></div>
+        <div class="mini">🎒 Team Journey Fund<b id="journeyFund" style="font-size:12px">Pending</b></div>
+      </div>
+      <div class="bigCard" style="margin-top:12px">
+        <h3>Control</h3>
+        <div class="row"><div><b>Data source</b><small id="moneySourceNote">Supabase money_cycles</small></div><span class="tag blue">Read-only</span></div>
+        <div class="row"><div><b>Write control</b><small>Read → Analyze → Recommend → Human Approval → Logged Write</small></div><span class="tag green">Protected</span></div>
+        <div class="tiny muted" style="margin-top:10px">Demo balance values have been removed from this Money screen.</div>
+      </div>
+    </section>
+
+    <section class="screen" id="stock">
+      <div class="sectionTitle"><div style="display:flex;align-items:center;gap:8px"><button class="back" data-screen="home">‹</button><h2>📦 Stock / Business</h2></div><button class="add" data-add="stock">＋</button></div>
+      <div class="subtabs"><span class="pill active">Overview</span><span class="pill">Low Stock</span><span class="pill">Purchase</span></div>
+      <div class="bigCard"><div class="tiny muted">Today’s Sales (Demo)</div><div class="big">1,386,000 MMK</div><div class="success tiny">GP 113,500 · 8.2%</div></div>
+      <div class="grid" style="margin-top:0"><div class="card"><div class="icon">🔴</div><div class="label">2 Stockout</div><div class="count">Need action</div></div><div class="card"><div class="icon">🟡</div><div class="label">5 Low stock</div><div class="count">Monitor</div></div></div>
+      <div class="bigCard" style="margin-top:12px"><h3>Attention</h3><div class="row"><div><b>Chicken Black Sauce</b><small>Stockout</small></div><span class="tag red">Urgent</span></div><div class="row"><div><b>Chicken Tendon Ball</b><small>Stockout</small></div><span class="tag red">Urgent</span></div></div>
+    </section>
+
+    <section class="screen" id="team">
+      <div class="sectionTitle"><div style="display:flex;align-items:center;gap:8px"><button class="back" data-screen="home">‹</button><h2>👥 Team</h2></div><button class="add" data-add="team">＋</button></div>
+      <div class="subtabs"><span class="pill active">Today</span><span class="pill">Attendance</span><span class="pill">Tasks</span></div>
+      <div class="list">
+        <div class="row"><div class="rowMain"><div class="avatar">SKT</div><div><b>San Kyaw Thet</b><small>Ops / Procurement</small></div></div><span class="tag green">On duty</span></div>
+        <div class="row"><div class="rowMain"><div class="avatar">ML</div><div><b>Myo Lay</b><small>Sales / Official Phone</small></div></div><span class="tag green">On duty</span></div>
+        <div class="row"><div class="rowMain"><div class="avatar">RZH</div><div><b>Raung Zin Htein</b><small>Delivery / Support</small></div></div><span class="tag green">On duty</span></div>
+        <div class="row"><div class="rowMain"><div class="avatar">THA</div><div><b>Thwin Htoo Aung</b><small>Helper</small></div></div><span class="tag green">On duty</span></div>
+        <div class="row"><div class="rowMain"><div class="avatar">JL</div><div><b>Jet Li</b><small>Supervisor</small></div></div><span class="tag green">On duty</span></div>
+        <div class="row"><div class="rowMain"><div class="avatar">SMT</div><div><b>Soe Myat Thu</b><small>Cashier</small></div></div><span class="tag orange">Follow-up</span></div>
+      </div>
+      <div class="bigCard" style="margin-top:12px"><h3>Team rule</h3><div class="tiny muted">အလုပ်ကိစ္စတွင် “ယုံကြည်မှု” တစ်ခုတည်းအစား Evidence → Verify → Follow-up ကို အသုံးပြုပါ။ ကိုယ်ရေးကိစ္စအသေးစိတ်ကို Team screen တွင် မထည့်ပါ။</div></div>
+    </section>
+
+    <section class="screen" id="approval">
+      <div class="sectionTitle"><div style="display:flex;align-items:center;gap:8px"><button class="back" data-screen="home">‹</button><h2>🚨 Approval Needed</h2></div><button class="add" data-add="approval">＋</button></div>
+      <div class="subtabs"><span class="pill active">Pending</span><span class="pill">In Progress</span><span class="pill">History</span></div>
+      <div id="approvalList">
+        <div class="approveItem" data-id="a1"><b>Supplier Payment</b><div class="tiny muted">Demo amount · supporting evidence required</div><div class="approveActions"><button class="btn ghost" data-review>Review</button><button class="btn primary" data-demoapprove>Approve in Demo</button></div></div>
+        <div class="approveItem" data-id="a2"><b>Stock Adjustment</b><div class="tiny muted">Negative stock → verify evidence first</div><div class="approveActions"><button class="btn ghost" data-review>Review</button><button class="btn primary" data-demoapprove>Approve in Demo</button></div></div>
+        <div class="approveItem" data-id="a3"><b>Contract / Large Payment</b><div class="tiny muted">Human approval required</div><div class="approveActions"><button class="btn ghost" data-review>Review</button><button class="btn primary" data-demoapprove>Approve in Demo</button></div></div>
+      </div>
+      <div class="legend">“Approve in Demo” သည် Prototype status ကိုသာ ပြောင်းလဲသည်။ ငွေလွှဲခြင်း၊ စတော့ပြင်ခြင်း၊ စာချုပ်အတည်ပြုခြင်း အစရှိသော လက်တွေ့လုပ်ဆောင်ချက် မရှိပါ။</div>
+    </section>
+
+    <section class="screen" id="today">
+      <div class="sectionTitle"><div style="display:flex;align-items:center;gap:8px"><button class="back" data-screen="home">‹</button><h2>📋 Today</h2></div><button class="add" data-add="today">＋</button></div>
+      <div class="hero"><div class="status" style="font-size:17px">Top 3 Priorities</div><p>ဒီနေ့ မဖြစ်မနေပြီးရမယ့် အချက် ၃ ခုကိုသာ ဦးစားပေးထားပါ။</p></div>
+      <div class="bigCard" style="margin-top:12px" id="taskList">
+        <div class="task"><button class="check" data-task="t1">✓</button><div><b>Health plan — next appointment confirm</b><div class="tiny muted">Health</div></div></div>
+        <div class="task"><button class="check" data-task="t2">✓</button><div><b>DT3 Daily Close evidence review</b><div class="tiny muted">Money / Stock</div></div></div>
+        <div class="task"><button class="check" data-task="t3">✓</button><div><b>Team check-in: blockers + support</b><div class="tiny muted">Team</div></div></div>
+      </div>
+      <div class="bigCard"><h3>End-of-day question</h3><div class="tiny muted">“ဒီနေ့ လုပ်ခဲ့တာထဲက ဘယ်လောက်ကို Evidence နဲ့ Verified လုပ်နိုင်ပြီလဲ?”</div></div>
+    </section>
+  </main>
+
+  <button class="fab" id="fab">＋</button>
+  <nav class="bottom">
+    <button class="nav active" data-screen="home"><span>⌂</span>Home</button>
+    <button class="nav" data-screen="health"><span>♡</span>Health</button>
+    <button class="nav" data-screen="money"><span>$</span>Money</button>
+    <button class="nav" data-screen="stock"><span>◇</span>Stock</button>
+    <button class="nav" data-screen="team"><span>♟</span>Team</button>
+    <button class="nav" data-screen="approval"><span>⚠</span>Approve</button>
+  </nav>
+</div>
+
+<div class="modalWrap" id="modalWrap">
+  <div class="modal">
+    <h3>Quick Add</h3>
+    <div class="field"><label>Category</label><select id="quickCategory"><option>Today</option><option>Health</option><option>Money</option><option>Stock</option><option>Team</option><option>Approval</option></select></div>
+    <div class="field"><label>Title</label><input id="quickTitle" placeholder="ဥပမာ — Supplier payment review" /></div>
+    <div class="field"><label>Note</label><textarea id="quickNote" rows="3" placeholder="လိုအပ်သည့် မှတ်စု..."></textarea></div>
+    <div class="modalActions"><button class="btn ghost" id="cancelModal">Cancel</button><button class="btn primary" id="saveQuick">Save to Prototype</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  const screens=[...document.querySelectorAll('.screen')], navs=[...document.querySelectorAll('.nav')];
+  function showScreen(id){
+    screens.forEach(s=>s.classList.toggle('active',s.id===id));
+    navs.forEach(n=>n.classList.toggle('active',n.dataset.screen===id));
+    if(id==='money') loadMoneyCycle();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.addEventListener('click',e=>{
+    const target=e.target.closest('[data-screen]'); if(target) showScreen(target.dataset.screen);
+  });
+  function updateClock(){const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});document.getElementById('todayDate').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});} updateClock();setInterval(updateClock,30000);
+  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+  // Local task practice state
+  const taskState=JSON.parse(localStorage.getItem('aikolin_tasks')||'{}');
+  document.querySelectorAll('[data-task]').forEach(btn=>{if(taskState[btn.dataset.task])btn.classList.add('done');btn.addEventListener('click',()=>{btn.classList.toggle('done');taskState[btn.dataset.task]=btn.classList.contains('done');localStorage.setItem('aikolin_tasks',JSON.stringify(taskState));refreshTaskCount();});});
+  function refreshTaskCount(){const n=[...document.querySelectorAll('[data-task]')].filter(b=>!b.classList.contains('done')).length;document.getElementById('taskCount').textContent=n;}
+  refreshTaskCount();
+
+  // Demo approval state
+  const approvalState=JSON.parse(localStorage.getItem('aikolin_approvals')||'{}');
+  document.querySelectorAll('.approveItem').forEach(item=>{if(approvalState[item.dataset.id])item.style.opacity=.45;});
+  function refreshApprovalCount(){const items=[...document.querySelectorAll('.approveItem')];const n=items.filter(i=>!approvalState[i.dataset.id]).length;document.getElementById('approvalCount').textContent=n;}
+  refreshApprovalCount();
+  document.querySelectorAll('[data-demoapprove]').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.approveItem');approvalState[item.dataset.id]=true;localStorage.setItem('aikolin_approvals',JSON.stringify(approvalState));item.style.opacity=.45;toast('Demo status updated — no real action was taken.');refreshApprovalCount();}));
+  document.querySelectorAll('[data-review]').forEach(btn=>btn.addEventListener('click',()=>toast('Review mode: Evidence → Verify → Human decision')));
+
+  // Generic checklist buttons
+  document.querySelectorAll('.check:not([data-task])').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('done')));
+
+  const modal=document.getElementById('modalWrap');
+  function openModal(category){document.getElementById('quickCategory').value=category||'Today';modal.classList.add('show');}
+  document.getElementById('fab').onclick=()=>openModal('Today');
+  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>openModal(b.dataset.add.charAt(0).toUpperCase()+b.dataset.add.slice(1)));
+  document.getElementById('cancelModal').onclick=()=>modal.classList.remove('show');
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+  document.getElementById('saveQuick').onclick=()=>{const title=document.getElementById('quickTitle').value.trim();if(!title){toast('Title ထည့်ပါ');return;}const saved=JSON.parse(localStorage.getItem('aikolin_quick_items')||'[]');saved.unshift({category:quickCategory.value,title,note:quickNote.value.trim(),created:new Date().toISOString()});localStorage.setItem('aikolin_quick_items',JSON.stringify(saved));quickTitle.value='';quickNote.value='';modal.classList.remove('show');toast('Saved locally in this prototype.');};
+
+
+  // DT3 Cycle #01 — live read-only from Supabase
+  const SUPABASE_URL='https://soathoemgaxqhgoyggdd.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY='sb_publishable_Dnmc6Z1Fs56Ql77MT4dk-A_axryn8sx';
+
+  function mmk(value){
+    if(value===null||value===undefined||value==='') return 'Pending';
+    return Number(value).toLocaleString('en-US',{maximumFractionDigits:2})+' MMK';
+  }
+  function fmtDate(value){
+    if(!value) return '—';
+    const d=new Date(value+'T00:00:00');
+    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  }
+  async function loadMoneyCycle(){
+    const status=document.getElementById('cycleStatus');
+    const source=document.getElementById('moneySourceNote');
+    if(!status) return;
+    status.textContent='Loading…'; status.className='tag blue';
+    try{
+      const fields='business_code,business_name,cycle_no,start_date,end_date,opening_performance_balance,journey_fund_rate,verified_net_profit,status';
+      const url=SUPABASE_URL+'/rest/v1/money_cycles?select='+encodeURIComponent(fields)+'&business_code=eq.DT3&cycle_no=eq.1&status=eq.approved&limit=1';
+      const res=await fetch(url,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const rows=await res.json();
+      if(!rows.length) throw new Error('No approved cycle');
+      const c=rows[0], rate=Number(c.journey_fund_rate||0), profit=c.verified_net_profit;
+      document.getElementById('cycleTitle').textContent=(c.business_name||'DT3 Seafood')+' · Cycle #'+String(c.cycle_no).padStart(2,'0');
+      document.getElementById('openingPerformance').textContent=mmk(c.opening_performance_balance);
+      document.getElementById('cyclePeriod').textContent=fmtDate(c.start_date)+' → '+fmtDate(c.end_date);
+      document.getElementById('journeyRate').textContent=(rate*100).toLocaleString('en-US',{maximumFractionDigits:2})+'%';
+      document.getElementById('verifiedNetProfit').textContent=profit===null?'Pending':mmk(profit);
+      document.getElementById('journeyFund').textContent=profit===null?'Pending':mmk(Number(profit)*rate);
+      status.textContent=String(c.status||'').toUpperCase();
+      status.className='tag green';
+      source.textContent='Supabase money_cycles · Live read-only';
+      localStorage.setItem('aikolin_dt3_cycle01_cache',JSON.stringify({data:c,ts:new Date().toISOString()}));
+    }catch(err){
+      status.textContent='CHECK'; status.className='tag orange';
+      source.textContent='Live read failed — reconnect and refresh';
+      const cached=JSON.parse(localStorage.getItem('aikolin_dt3_cycle01_cache')||'null');
+      if(cached&&cached.data){
+        const c=cached.data, rate=Number(c.journey_fund_rate||0), profit=c.verified_net_profit;
+        document.getElementById('cycleTitle').textContent=(c.business_name||'DT3 Seafood')+' · Cycle #'+String(c.cycle_no).padStart(2,'0');
+        document.getElementById('openingPerformance').textContent=mmk(c.opening_performance_balance);
+        document.getElementById('cyclePeriod').textContent=fmtDate(c.start_date)+' → '+fmtDate(c.end_date);
+        document.getElementById('journeyRate').textContent=(rate*100).toLocaleString('en-US',{maximumFractionDigits:2})+'%';
+        document.getElementById('verifiedNetProfit').textContent=profit===null?'Pending':mmk(profit);
+        document.getElementById('journeyFund').textContent=profit===null?'Pending':mmk(Number(profit)*rate);
+        source.textContent='Cached copy · '+new Date(cached.ts).toLocaleString();
+      }
+    }
+  }
+  loadMoneyCycle();
+
+  // Installable PWA support
+  let deferredInstallPrompt = null;
+  const installBtn = document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (installBtn) installBtn.style.display = 'inline-block';
+  });
+  if (installBtn) installBtn.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) {
+      toast('Browser menu → Add to Home screen / Install app ကို သုံးပါ');
+      return;
+    }
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBtn.style.display = 'none';
+  });
+  window.addEventListener('appinstalled', () => toast('AIKOLIN HOME installed on this device.'));
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {
+        // Local file/content:// mode cannot register service workers. HTTPS/localhost is required.
+      });
+    });
+  }
+
+</script>
+</body>
+</html>
