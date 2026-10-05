@@ -108,7 +108,7 @@
       </div>
       <div class="bigCard" style="margin-top:12px">
         <h3>Control</h3>
-        <div class="row"><div><b>Data source</b><small id="moneySourceNote">Supabase money_cycles</small></div><span class="tag blue">Read-only</span></div>
+        <div class="row"><div><b>Data source</b><small id="moneySourceNote">Supabase money_cycles_app_read</small></div><span class="tag blue">Read-only</span></div>
         <div class="row"><div><b>Write control</b><small>Read → Analyze → Recommend → Human Approval → Logged Write</small></div><span class="tag green">Protected</span></div>
         <div class="tiny muted" style="margin-top:10px">Demo balance values have been removed from this Money screen.</div>
       </div>
@@ -240,7 +240,7 @@
     status.textContent='Loading…'; status.className='tag blue';
     try{
       const fields='business_code,business_name,cycle_no,start_date,end_date,opening_performance_balance,journey_fund_rate,status';
-      const url=SUPABASE_URL+'/rest/v1/money_cycles?select='+encodeURIComponent(fields)+'&business_code=eq.DT3&cycle_no=eq.1&status=eq.approved&limit=1';
+      const url=SUPABASE_URL+'/rest/v1/money_cycles_app_read?select='+encodeURIComponent(fields)+'&business_code=eq.DT3&cycle_no=eq.1&status=eq.approved&limit=1';
       const res=await fetch(url,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
       if(!res.ok) throw new Error('HTTP '+res.status);
       const rows=await res.json();
@@ -254,7 +254,7 @@
       document.getElementById('journeyFund').textContent=profit===null?'Pending':mmk(Number(profit)*rate);
       status.textContent=String(c.status||'').toUpperCase();
       status.className='tag green';
-      source.textContent='Supabase money_cycles · Live read-only';
+      source.textContent='Supabase money_cycles_app_read · Live read-only';
       localStorage.setItem('aikolin_dt3_cycle01_cache',JSON.stringify({data:c,ts:new Date().toISOString()}));
     }catch(err){
       status.textContent='CHECK'; status.className='tag orange';
@@ -303,6 +303,6 @@
   }
 
 </script>
-<!-- deploy-trigger: 2026-10-05 money-live-v1 -->
+<!-- deploy-trigger: 2026-10-05 money-live-v2 -->
 </body>
 </html>
