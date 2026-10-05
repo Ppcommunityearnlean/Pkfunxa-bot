@@ -239,13 +239,13 @@
     if(!status) return;
     status.textContent='Loading…'; status.className='tag blue';
     try{
-      const fields='business_code,business_name,cycle_no,start_date,end_date,opening_performance_balance,journey_fund_rate,verified_net_profit,status';
+      const fields='business_code,business_name,cycle_no,start_date,end_date,opening_performance_balance,journey_fund_rate,status';
       const url=SUPABASE_URL+'/rest/v1/money_cycles?select='+encodeURIComponent(fields)+'&business_code=eq.DT3&cycle_no=eq.1&status=eq.approved&limit=1';
       const res=await fetch(url,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Accept:'application/json'},cache:'no-store'});
       if(!res.ok) throw new Error('HTTP '+res.status);
       const rows=await res.json();
       if(!rows.length) throw new Error('No approved cycle');
-      const c=rows[0], rate=Number(c.journey_fund_rate||0), profit=c.verified_net_profit;
+      const c=rows[0], rate=Number(c.journey_fund_rate||0), profit=null;
       document.getElementById('cycleTitle').textContent=(c.business_name||'DT3 Seafood')+' · Cycle #'+String(c.cycle_no).padStart(2,'0');
       document.getElementById('openingPerformance').textContent=mmk(c.opening_performance_balance);
       document.getElementById('cyclePeriod').textContent=fmtDate(c.start_date)+' → '+fmtDate(c.end_date);
@@ -261,7 +261,7 @@
       source.textContent='Live read failed — reconnect and refresh';
       const cached=JSON.parse(localStorage.getItem('aikolin_dt3_cycle01_cache')||'null');
       if(cached&&cached.data){
-        const c=cached.data, rate=Number(c.journey_fund_rate||0), profit=c.verified_net_profit;
+        const c=cached.data, rate=Number(c.journey_fund_rate||0), profit=null;
         document.getElementById('cycleTitle').textContent=(c.business_name||'DT3 Seafood')+' · Cycle #'+String(c.cycle_no).padStart(2,'0');
         document.getElementById('openingPerformance').textContent=mmk(c.opening_performance_balance);
         document.getElementById('cyclePeriod').textContent=fmtDate(c.start_date)+' → '+fmtDate(c.end_date);
@@ -303,5 +303,6 @@
   }
 
 </script>
+<!-- deploy-trigger: 2026-10-05 money-live-v1 -->
 </body>
 </html>
