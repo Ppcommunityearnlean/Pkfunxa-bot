@@ -29,7 +29,8 @@ button{font:inherit;cursor:pointer}.app{max-width:460px;margin:0 auto;min-height
 <div class="box"><span class="tiny muted">Reference</span><b id="ref">—</b></div>
 </div><div class="evidence"><div class="tiny muted">Supporting Evidence</div><b id="evidence">—</b><div class="tiny muted" style="margin-top:5px">Verify evidence before a human decision.</div></div></div>
 <div class="card"><h3 style="margin-top:0">AI / Control Review</h3><div class="row"><div><b>Evidence check</b><div class="tiny muted" id="check">—</div></div><span class="tag orange" id="checkTag">CHECK</span></div><div class="tiny muted" id="recommendation" style="margin-top:10px">—</div>
-<div style="margin-top:12px"><button class="btn" id="verifyEvidence" style="width:100%;background:rgba(57,199,122,.14);color:#87efb3">Mark Evidence Verified — Demo</button></div>
+<div id="approvalGateHint" class="tiny" style="margin-top:12px;padding:10px;border:1px solid rgba(255,154,61,.28);border-radius:10px;background:rgba(255,154,61,.10);color:#ffcf9f">Approve blocked: Supporting Evidence → Evidence check must be VERIFIED.</div>
+<div style="margin-top:10px"><button class="btn" id="verifyEvidence" style="width:100%;background:rgba(57,199,122,.14);color:#87efb3">Mark Evidence Verified — Demo</button></div>
 <div class="actions"><button class="btn primary" data-decision="Approved" id="approveBtn">Approve</button><button class="btn danger" data-decision="Rejected">Reject</button><button class="btn warn" data-decision="Hold">Hold</button></div></div>
 <div class="card"><h3 style="margin-top:0">Decision Log</h3><div id="decisionLog" class="tiny muted">No decision recorded yet.</div></div>
 <div class="legend">Training prototype only — decisions are stored locally on this device. No payment, stock adjustment, or contract action is performed.</div>
@@ -56,18 +57,22 @@ function renderStatus(){
 }
 function renderEvidenceState(){
  const verified=!!getVerified()[id];
- const check=document.getElementById('check'), tag=document.getElementById('checkTag'), verifyBtn=document.getElementById('verifyEvidence'), approve=document.getElementById('approveBtn');
+ const check=document.getElementById('check'), tag=document.getElementById('checkTag'), verifyBtn=document.getElementById('verifyEvidence'), approve=document.getElementById('approveBtn'), hint=document.getElementById('approvalGateHint');
  if(verified){
    check.textContent='Evidence verified in demo';
    tag.textContent='VERIFIED';
    tag.className='tag green';
    verifyBtn.textContent='Evidence Verified — Demo';
+   hint.textContent='Approval gate cleared: Evidence check is VERIFIED.';
+   hint.style.color='#87efb3';hint.style.borderColor='rgba(57,199,122,.28)';hint.style.background='rgba(57,199,122,.10)';
    approve.disabled=false; approve.style.opacity='1';
  }else{
    check.textContent=r.check;
    tag.textContent=r.checkTag;
    tag.className='tag '+r.checkClass;
    verifyBtn.textContent='Mark Evidence Verified — Demo';
+   hint.textContent='Approve blocked: Supporting Evidence → Evidence check must be VERIFIED.';
+   hint.style.color='#ffcf9f';hint.style.borderColor='rgba(255,154,61,.28)';hint.style.background='rgba(255,154,61,.10)';
    approve.disabled=true; approve.style.opacity='.45';
  }
 }
