@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071722">
+<title>AIKOLIN HOME — Approval Review Detail V1</title>
+<style>
+:root{--text:#f7fbff;--muted:#9db1bf;--line:rgba(255,255,255,.10);--green:#39c77a;--blue:#5aa7ff;--orange:#ff9a3d;--red:#ff6b6b;--yellow:#ffca3a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#06131d,#0a1c29 50%,#06131d);color:var(--text);font-family:"Noto Sans Myanmar","Pyidaungsu",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer}.app{max-width:460px;margin:0 auto;min-height:100vh;background:rgba(5,18,28,.82)}.top{padding:16px 18px 12px;border-bottom:1px solid var(--line)}.brand{display:flex;gap:10px;align-items:center}.bolt{font-size:28px}.brand h1{font-size:18px;margin:0}.brand small{color:var(--muted)}
+.mode{margin-top:10px;background:rgba(255,202,58,.12);border:1px solid rgba(255,202,58,.28);color:#ffe59a;border-radius:12px;padding:8px 10px;font-size:11px}.content{padding:16px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.head h2{font-size:18px;margin:0}.back{color:white;text-decoration:none;font-size:22px;margin-right:8px}
+.tag{padding:5px 7px;border-radius:999px;font-size:9px;border:1px solid var(--line);white-space:nowrap}.tag.blue{background:rgba(90,167,255,.14);color:#a8d0ff}.tag.green{background:rgba(57,199,122,.13);color:#87efb3}.tag.orange{background:rgba(255,154,61,.13);color:#ffca94}.tag.red{background:rgba(255,107,107,.14);color:#ffaaaa}
+.card{border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;background:rgba(255,255,255,.035)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.box{padding:11px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--line)}.muted{color:var(--muted)}.tiny{font-size:11px}.box .tiny{display:block;margin-bottom:4px}
+.evidence{padding:12px;border-radius:14px;background:rgba(90,167,255,.08);border:1px solid rgba(90,167,255,.18);margin-top:10px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.btn{border-radius:10px;padding:10px 6px;font-size:10px;border:1px solid var(--line)}.primary{background:var(--blue);color:#06131d;font-weight:800}.danger{background:rgba(255,107,107,.16);color:#ffb2b2}.warn{background:rgba(255,154,61,.18);color:#ffcf9f}
+.log{padding:10px 0;border-bottom:1px solid var(--line)}.log:last-child{border-bottom:0}.legend{font-size:10px;color:var(--muted);line-height:1.6}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#102b3c;border:1px solid var(--line);padding:10px 14px;border-radius:12px;color:white;font-size:11px;opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:88vw;text-align:center}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><div class="brand"><div class="bolt">⚡</div><div><h1>AIKOLIN HOME <span style="color:var(--yellow)">V1.1</span></h1><small>Approval Review Detail V1</small></div></div><div class="mode">Training Prototype · Read → Analyze → Recommend → Human Approval</div></div>
+<main class="content">
+<div class="head"><div><a class="back" href="./approval-preview.html">‹</a><strong id="title">Review</strong></div><span class="tag blue" id="status">PENDING</span></div>
+<div class="card"><div class="grid">
+<div class="box"><span class="tiny muted">Category</span><b id="category">—</b></div>
+<div class="box"><span class="tiny muted">Amount / Impact</span><b id="amount">—</b></div>
+<div class="box"><span class="tiny muted">Requested by</span><b id="requester">—</b></div>
+<div class="box"><span class="tiny muted">Reference</span><b id="ref">—</b></div>
+</div><div class="evidence"><div class="tiny muted">Supporting Evidence</div><b id="evidence">—</b><div class="tiny muted" style="margin-top:5px">Verify evidence before a human decision.</div></div></div>
+<div class="card"><h3 style="margin-top:0">AI / Control Review</h3><div class="row"><div><b>Evidence check</b><div class="tiny muted" id="check">—</div></div><span class="tag orange" id="checkTag">CHECK</span></div><div class="tiny muted" id="recommendation" style="margin-top:10px">—</div>
+<div id="approvalGateHint" class="tiny" style="margin-top:12px;padding:10px;border:1px solid rgba(255,154,61,.28);border-radius:10px;background:rgba(255,154,61,.10);color:#ffcf9f">Approve blocked: Supporting Evidence → Evidence check must be VERIFIED.</div>
+<div style="margin-top:10px"><button class="btn" id="verifyEvidence" style="width:100%;background:rgba(57,199,122,.14);color:#87efb3">Mark Evidence Verified — Demo</button></div>
+<div class="actions"><button class="btn primary" data-decision="Approved" id="approveBtn">Approve</button><button class="btn danger" data-decision="Rejected">Reject</button><button class="btn warn" data-decision="Hold">Hold</button></div></div>
+<div class="card"><h3 style="margin-top:0">Decision Log</h3><div id="decisionLog" class="tiny muted">No decision recorded yet.</div></div>
+<div class="legend">Training prototype only — decisions are stored locally on this device. No payment, stock adjustment, or contract action is performed.</div>
+</main></div><div class="toast" id="toast"></div>
+<script>
+const reviews={
+ a1:{title:'Supplier Payment Review',category:'Money',amount:'Demo amount',requester:'DT3 / Staff request',ref:'PAY-DEMO-001',evidence:'Payment voucher + supplier evidence required',check:'Evidence not verified yet',checkTag:'CHECK',checkClass:'orange',recommendation:'Recommendation: Hold until supplier/payment evidence is verified.'},
+ a2:{title:'Stock Adjustment Review',category:'Stock',amount:'Negative stock adjustment',requester:'DT3 / Stock control',ref:'STK-DEMO-001',evidence:'Approved inventory-adjustment evidence required',check:'Negative stock evidence must be verified first',checkTag:'CHECK',checkClass:'orange',recommendation:'Recommendation: Do not adjust stock until evidence and human approval are complete.'},
+ a3:{title:'Contract / Large Payment Review',category:'Contract',amount:'Large-value commitment',requester:'Management review',ref:'CTR-DEMO-001',evidence:'Contract and supporting documents required',check:'Human approval required',checkTag:'HUMAN',checkClass:'blue',recommendation:'Recommendation: Review evidence and terms before deciding.'}
+};
+const id=new URLSearchParams(location.search).get('id')||'a1';
+const r=reviews[id]||reviews.a1;
+const key='aikolin_approval_decisions_v1';
+const verifyKey='aikolin_approval_verified_v1';
+function getLogs(){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return[]}}
+function getVerified(){try{return JSON.parse(localStorage.getItem(verifyKey)||'{}')}catch(e){return{}}}
+function setVerified(value){const v=getVerified();v[id]=value;localStorage.setItem(verifyKey,JSON.stringify(v));renderEvidenceState()}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function renderStatus(){
+ const logs=getLogs().filter(x=>x.id===id), last=logs[logs.length-1], s=document.getElementById('status');
+ if(!last){s.textContent='PENDING';s.className='tag blue';return}
+ s.textContent=last.decision.toUpperCase();
+ s.className='tag '+(last.decision==='Approved'?'green':last.decision==='Rejected'?'red':'orange');
+}
+function renderEvidenceState(){
+ const verified=!!getVerified()[id];
+ const check=document.getElementById('check'), tag=document.getElementById('checkTag'), verifyBtn=document.getElementById('verifyEvidence'), approve=document.getElementById('approveBtn'), hint=document.getElementById('approvalGateHint');
+ if(verified){
+   check.textContent='Evidence verified in demo';
+   tag.textContent='VERIFIED';
+   tag.className='tag green';
+   verifyBtn.textContent='Evidence Verified — Demo';
+   hint.textContent='Approval gate cleared: Evidence check is VERIFIED.';
+   hint.style.color='#87efb3';hint.style.borderColor='rgba(57,199,122,.28)';hint.style.background='rgba(57,199,122,.10)';
+   approve.disabled=false; approve.style.opacity='1';
+ }else{
+   check.textContent=r.check;
+   tag.textContent=r.checkTag;
+   tag.className='tag '+r.checkClass;
+   verifyBtn.textContent='Mark Evidence Verified — Demo';
+   hint.textContent='Approve blocked: Supporting Evidence → Evidence check must be VERIFIED.';
+   hint.style.color='#ffcf9f';hint.style.borderColor='rgba(255,154,61,.28)';hint.style.background='rgba(255,154,61,.10)';
+   approve.disabled=true; approve.style.opacity='.45';
+ }
+}
+function renderLog(){
+ const box=document.getElementById('decisionLog'), logs=getLogs().filter(x=>x.id===id).reverse();
+ if(!logs.length){box.className='tiny muted';box.textContent='No decision recorded yet.';return}
+ box.className='';
+ box.innerHTML=logs.map(x=>'<div class="log"><b>'+x.decision+'</b><div class="tiny muted">'+new Date(x.at).toLocaleString()+' · local training record</div></div>').join('');
+}
+document.getElementById('title').textContent=r.title;
+document.getElementById('category').textContent=r.category;
+document.getElementById('amount').textContent=r.amount;
+document.getElementById('requester').textContent=r.requester;
+document.getElementById('ref').textContent=r.ref;
+document.getElementById('evidence').textContent=r.evidence;
+document.getElementById('recommendation').textContent=r.recommendation;
+document.getElementById('verifyEvidence').addEventListener('click',()=>{setVerified(true);toast('Evidence marked verified in demo.');});
+document.querySelectorAll('[data-decision]').forEach(btn=>btn.addEventListener('click',()=>{
+ if(btn.dataset.decision==='Approved'&&!getVerified()[id]){toast('Approve blocked — verify evidence first.');return}
+ const logs=getLogs(); logs.push({id,decision:btn.dataset.decision,at:new Date().toISOString(),evidenceVerified:!!getVerified()[id]}); localStorage.setItem(key,JSON.stringify(logs)); renderEvidenceState();renderStatus();renderLog();toast(btn.dataset.decision+' recorded locally — no real action was taken.');
+}));
+renderStatus();renderLog();
+</script></body></html>
